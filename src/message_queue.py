@@ -56,7 +56,7 @@ with patch_stdout():
 
         # 所有积压消息合并后，只调用一次 LLM
         ai_message: AIMessage = llm.invoke(messages)
-        time.sleep(random.uniform(5))  # 模拟 LLM 慢速输出
+        time.sleep(random.uniform(0, 5))  # 模拟 LLM 慢速输出
         
         messages.append(ai_message)
         print(f"\nAI: \n{ai_message.content}\n")
