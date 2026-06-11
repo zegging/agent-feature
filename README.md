@@ -24,3 +24,17 @@ A collection of interesting agent features — practical implementations and cre
 ```
 
 核心关系：`input_thread` 只负责 **写** 队列，主线程只负责 **读** 队列，两者通过 `input_queue` 解耦，互不阻塞。
+
+### Async 版本
+
+[message_queue_async.py](/src/message_queue_async.py) 是全程异步的等价实现，用 `asyncio` 替代多线程：
+
+| | threading 版 | asyncio 版 |
+|---|---|---|
+| 并发模型 | 多线程 | 单线程事件循环 |
+| 输入读取 | `session.prompt()` + `Thread` | `await session.prompt_async()` + `create_task` |
+| 队列 | `queue.Queue` | `asyncio.Queue` |
+| LLM 调用 | `llm.invoke()`（阻塞） | `await llm.ainvoke()`（非阻塞） |
+| 竞态风险 | 理论上存在（实际安全） | 完全不存在 |
+
+两个版本都依赖 `patch_stdout` 解决控制台输出乱序问题，这与并发模型无关——`print()` 输出时需要清除输入行、打印后重绘提示符，缺少它就会出现输出与输入行交错的现象。
