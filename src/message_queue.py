@@ -51,6 +51,10 @@ with patch_stdout():
         messages.append(HumanMessage(content=user_input))
 
         # 再把队列里积压的其余消息一并取出（非阻塞）
+        # 
+        # empty() 和 get_nowait() 两步之间不是原子操作，理论上存在竞态——另一个线程可能在两步
+        # 之间把元素取走，导致 get_nowait() 还是抛 Empty。但在这个项目里主线程是唯一的消费者，
+        # 不存在竞争，所以是安全的。
         while not input_queue.empty():
             messages.append(HumanMessage(content=input_queue.get_nowait()))
 
