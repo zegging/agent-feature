@@ -1,6 +1,10 @@
 # Interesting Agent feature
 
-a project for interesting agent feature, implement or creative
+A collection of interesting agent features — practical implementations and creative experiments.
+
+## Run
+
+`uv sync` 即可。
 
 ## Message Queue
 
